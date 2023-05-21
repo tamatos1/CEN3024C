@@ -147,7 +147,6 @@ public class TextAnalyzer {
         finalString = line.replaceAll("[^a-zA-Z0-9\\s]", "");
         return finalString;
     }
-
 }
 
 
