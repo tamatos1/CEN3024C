@@ -107,10 +107,7 @@ public class TextAnalyzer {
         String lineTemp = "";
         boolean titleFound = false;
 
-        System.out.println(title);
-
         while(scan.hasNextLine() && !titleFound){
-            System.out.println(scan.hasNext(".*<h1>The Raven</h1>.*"));
             lineTemp = scan.nextLine();
             System.out.println(lineTemp);
             titleFound = lineTemp.equals(title);
