@@ -92,10 +92,6 @@ public class TextAnalyzer {
             i++;
         }
         top20 = sortByValuesDescending(top20);
-
-        //System.out.println(sortedMap.toString());
-        //System.out.println(top20.toString());
-
         return top20;
     }
     private static String[] lineToStringArray(String line) {
@@ -109,7 +105,6 @@ public class TextAnalyzer {
 
         while(scan.hasNextLine() && !titleFound){
             lineTemp = scan.nextLine();
-            System.out.println(lineTemp);
             titleFound = lineTemp.equals(title);
         }
 
