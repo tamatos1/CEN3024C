@@ -9,42 +9,28 @@ public class TextAnalyzer {
         String lineTemp = "";
         TreeMap<String, Integer> treeMapOfWords = new TreeMap<String, Integer>();
         int maxForTopN = 20;
+        int i = 0;
 
         // Get url and get ready to read
         URL url = new URL("https://www.gutenberg.org/files/1065/1065-h/1065-h.htm");
         Scanner scan = new Scanner(url.openStream());
 
         // Find the title
-        moveAfterTitleLine(scan, startingHtmlLine);
+        lineTemp = getTitleLine(scan, startingHtmlLine);
 
         // Loop through each line until the end is found
         while(scan.hasNextLine() && !lineTemp.equals(stoppingHtmlLine)) {
             // Read the line and store in temp variable
-            lineTemp = scan.nextLine().trim();
 
-
-            // Show the text after removing special characters and HTML tags
-            //System.out.println(removeSpecialCharacters((removeHtmlTags(lineTemp))));
+            if (i !=0) {
+                lineTemp = scan.nextLine().trim();
+            }
 
             // Check to see if the line is blank
             if (lineTemp.length() > 0 && lineTemp != null) {
-
-                // Loop through the list of normalized words
-                for(String word : lineToStringArray(removeSpecialCharacters((removeHtmlTags(lineTemp))))){
-
-                    // Check to see if the word is blank
-                    if(word.length() > 0 &&  word != null) {
-
-                        // If not a new word, then add 1 to the counter for that word
-                        if (treeMapOfWords.containsKey(word)) {
-                            treeMapOfWords.put(word, treeMapOfWords.get(word) + 1 );
-                        } else {
-                            // New word
-                            treeMapOfWords.put(word, 1);
-                        }
-                    }
-                }
+                addWordsToFrequencyCounter(lineTemp, treeMapOfWords);
             }
+            i++;
         }
 
         scan.close();
@@ -72,6 +58,23 @@ public class TextAnalyzer {
         return sortedByValuesDescending;
     }
 
+    public static void addWordsToFrequencyCounter(String line, TreeMap<String, Integer> treeMap) {
+        // Loop through the list of normalized words
+        for(String word : lineToStringArray(removeSpecialCharacters((removeHtmlTags(line))))){
+
+            // Check to see if the word is blank
+            if(word.length() > 0 &&  word != null) {
+
+                // If not a new word, then add 1 to the counter for that word
+                if (treeMap.containsKey(word)) {
+                    treeMap.put(word, treeMap.get(word) + 1 );
+                } else {
+                    // New word
+                    treeMap.put(word, 1);
+                }
+            }
+        }
+    }
     private static Map getTopNTreeNodes(TreeMap treeMap, int maxCount, boolean printToScreen) {
         Map sortedMap = sortByValuesDescending(treeMap);
         Map<String, Integer> top20 = new HashMap<String, Integer>();
@@ -100,15 +103,20 @@ public class TextAnalyzer {
         return words;
     }
 
-    private static void moveAfterTitleLine(Scanner scan, String title) {
-        String lineTemp;
+    private static String getTitleLine(Scanner scan, String title) {
+        String lineTemp = "";
         boolean titleFound = false;
 
-        while(scan.hasNextLine() && !titleFound){
+        System.out.println(title);
 
+        while(scan.hasNextLine() && !titleFound){
+            System.out.println(scan.hasNext(".*<h1>The Raven</h1>.*"));
             lineTemp = scan.nextLine();
+            System.out.println(lineTemp);
             titleFound = lineTemp.equals(title);
         }
+
+        return lineTemp;
     }
 
     private static String removeHtmlTags(String line) {
