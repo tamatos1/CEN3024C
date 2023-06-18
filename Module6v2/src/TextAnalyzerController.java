@@ -83,11 +83,9 @@ public class TextAnalyzerController {
         Map myMap = new TreeMap() {
         };
 
-
+        onResultsMenuItemClicked();
+        
         RadioButton selectedButton = (RadioButton) grpInputType.getSelectedToggle();
-
-        System.out.println(selectedButton.getText());
-
         switch (selectedButton.getText())
         {
             case "Using URL":
@@ -97,9 +95,6 @@ public class TextAnalyzerController {
                 myMap = TextAnalyzer.getListOfWordFrequencyUsingText(txtSourceTextbox.getText(), topN);
                 break;
         }
-
-
-
 
         tblcWord.setCellValueFactory(new PropertyValueFactory("word"));
         tblcCount.setCellValueFactory(new PropertyValueFactory("frequency"));

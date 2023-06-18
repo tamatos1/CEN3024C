@@ -190,7 +190,7 @@ public class TextAnalyzer extends Application {
 
         Scene scene = new Scene(fxmlLoader.load(), 600, 800);
         stage.setScene(scene);
-        stage.setTitle("My Title");
+        stage.setTitle("Module 6 Assignment");
         stage.show();
 
 
