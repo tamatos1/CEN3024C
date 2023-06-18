@@ -92,6 +92,7 @@
             </Label>
             <TableView fx:id="tblvwFrequency" prefHeight="159.0" prefWidth="540.0" VBox.vgrow="ALWAYS">
               <columns>
+                  <TableColumn fx:id="tblcRow" prefWidth="50.0" sortType="DESCENDING" text="Row" />
                 <TableColumn fx:id="tblcWord" prefWidth="75.0" text="Word" />
                 <TableColumn fx:id="tblcCount" prefWidth="75.0" sortType="DESCENDING" text="Count" />
               </columns>

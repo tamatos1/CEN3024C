@@ -69,6 +69,9 @@ public class TextAnalyzerController {
     private TableColumn<?, ?> tblcCount;
 
     @FXML
+    private TableColumn<?, ?> tblcRow;
+
+    @FXML
     private TableColumn<?, ?> tblcWord;
 
     @FXML
@@ -78,13 +81,14 @@ public class TextAnalyzerController {
 
     @FXML
     void onClicked() throws IOException {
+        int i = 1;
         tblvwFrequency.getSortOrder().add((TableColumn<WordFrequency, ?>) tblcCount);
         ObservableList<WordFrequency> data = FXCollections.observableArrayList();
         Map myMap = new TreeMap() {
         };
 
         onResultsMenuItemClicked();
-        
+
         RadioButton selectedButton = (RadioButton) grpInputType.getSelectedToggle();
         switch (selectedButton.getText())
         {
@@ -98,12 +102,14 @@ public class TextAnalyzerController {
 
         tblcWord.setCellValueFactory(new PropertyValueFactory("word"));
         tblcCount.setCellValueFactory(new PropertyValueFactory("frequency"));
+        tblcRow.setCellValueFactory(new PropertyValueFactory("row"));
 
         Iterator<Map.Entry<String, Integer>> iterator = myMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, Integer> pair = iterator.next();
 
-            data.add(new WordFrequency(pair.getKey(), pair.getValue()));
+            data.add(new WordFrequency(pair.getKey(), pair.getValue(), i));
+            i++;
 
         }
         tblvwFrequency.setItems(data);
@@ -146,10 +152,12 @@ public class TextAnalyzerController {
     public class WordFrequency {
         SimpleStringProperty word;
         SimpleIntegerProperty frequency;
+        SimpleIntegerProperty row;
 
-        WordFrequency(String word, Integer frequency) {
+        WordFrequency(String word, Integer frequency, Integer row) {
             this.word = new SimpleStringProperty(word);
             this.frequency = new SimpleIntegerProperty(frequency);
+            this.row = new SimpleIntegerProperty(row);
         }
 
         public Integer getFrequency() {
@@ -158,6 +166,14 @@ public class TextAnalyzerController {
 
         public void setFrequency(Integer value) {
             frequency.set(value);
+        }
+
+        public Integer getRow() {
+            return row.get();
+        }
+
+        public void setRow(Integer value) {
+            row.set(value);
         }
 
         public String getWord() {
