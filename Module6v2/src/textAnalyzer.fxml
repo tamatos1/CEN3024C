@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="629.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TextAnalyzerController">
+   <children>
+      <MenuBar fx:id="mnuBar" layoutX="14.0" layoutY="7.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#onUseDefaultsClick" text="Use defaults" />
+              <MenuItem fx:id="mItmFileClose" mnemonicParsing="false" onAction="#onCloseApplicationClick" text="Close" />
+            </items>
+          </Menu>
+          <Menu fx:id="mnuResults" mnemonicParsing="false" text="Results">
+            <items>
+                  <RadioMenuItem mnemonicParsing="false" onAction="#onResultsMenuItemClicked" text="Top 5">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="grpMaxReturnCount" />
+                     </toggleGroup>
+                  </RadioMenuItem>
+                  <RadioMenuItem mnemonicParsing="false" onAction="#onResultsMenuItemClicked" text="Top 10" toggleGroup="$grpMaxReturnCount" />
+                  <RadioMenuItem mnemonicParsing="false" onAction="#onResultsMenuItemClicked" selected="true" text="Top 20" toggleGroup="$grpMaxReturnCount" />
+                  <RadioMenuItem mnemonicParsing="false" onAction="#onResultsMenuItemClicked" text="Top 50" toggleGroup="$grpMaxReturnCount" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <Label alignment="CENTER" layoutX="182.0" layoutY="42.0" text="Text Analyzer" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="40.0">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <VBox layoutX="73.0" layoutY="354.0" prefHeight="200.0" prefWidth="463.0" spacing="25.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="75.0">
+         <children>
+            <RadioButton fx:id="rdoSourceUrl" mnemonicParsing="false" onAction="#onRadioButtonClick" text="Using URL">
+               <toggleGroup>
+                  <ToggleGroup fx:id="grpInputType" />
+               </toggleGroup>
+            </RadioButton>
+            <VBox prefHeight="25.0" prefWidth="540.0" spacing="10.0">
+               <children>
+                  <HBox prefHeight="29.0" prefWidth="540.0" spacing="20.0">
+                     <children>
+                        <Label fx:id="lblSourceUrl" minWidth="-Infinity" prefHeight="17.0" prefWidth="75.0" text="URL of text" HBox.hgrow="NEVER" />
+                        <TextField fx:id="txtSourceUrl" prefHeight="25.0" prefWidth="263.0" promptText="Example - &quot;https://www.gutenberg.org/files/1065/1065-h/1065-h.htm&quot;" HBox.hgrow="ALWAYS" />
+                     </children>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                  </HBox>
+                  <HBox prefHeight="29.0" prefWidth="540.0" spacing="20.0">
+                     <children>
+                        <Label fx:id="lblHtmlOfTitle" minWidth="-Infinity" prefHeight="17.0" prefWidth="75.0" text="HTML of Title" HBox.hgrow="NEVER" />
+                        <TextField fx:id="txtHtmlOfTitle" prefHeight="25.0" prefWidth="263.0" promptText="&lt;h1&gt;The Raven&lt;/h1&gt;" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblHtmlOfEnd" minWidth="-Infinity" prefHeight="17.0" prefWidth="75.0" text="HTML of End" HBox.hgrow="NEVER" />
+                        <TextField fx:id="txtHtmlOfEnd" prefHeight="25.0" prefWidth="263.0" promptText="&lt;/div&gt;&lt;!--end chapter--&gt;" HBox.hgrow="ALWAYS" />
+                     </children>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
+            <RadioButton fx:id="rdoSourceTextbox" mnemonicParsing="false" onAction="#onRadioButtonClick" text="Using Textbox" toggleGroup="$grpInputType" />
+            <TextArea fx:id="txtSourceTextbox" prefHeight="125.0" prefWidth="540.0" VBox.vgrow="NEVER" />
+            <AnchorPane prefHeight="42.0" prefWidth="540.0" VBox.vgrow="NEVER">
+               <children>
+                  <Button fx:id="btnAnalyze" disable="true" layoutX="187.0" layoutY="31.0" minWidth="-Infinity" mnemonicParsing="false" onAction="#onClicked" prefHeight="25.0" prefWidth="70.0" text="Generate" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="5.0" />
+               </children>
+            </AnchorPane>
+            <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Resutls" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <TableView fx:id="tblvwFrequency" prefHeight="159.0" prefWidth="540.0" VBox.vgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="tblcWord" prefWidth="75.0" text="Word" />
+                <TableColumn fx:id="tblcCount" prefWidth="75.0" sortType="DESCENDING" text="Count" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

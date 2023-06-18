@@ -1,17 +1,28 @@
+import com.sun.media.jfxmedia.events.PlayerTimeListener;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-public class TextAnalyzer {
-    public static void main(String args[]) throws IOException {
-        String startingHtmlLine = "<h1>The Raven</h1>";
-        String stoppingHtmlLine = "</div><!--end chapter-->";
+public class TextAnalyzer extends Application {
+    private static TreeMap<String, Integer> treeMapOfWords = new TreeMap<String, Integer>();
+
+    public static Map getListOfWordFrequencyUsingURL(String sourceUrl, String startingHtmlLine, String stoppingHtmlLine, Integer topN) throws IOException {
+        clearList();
+
         String lineTemp = "";
-        TreeMap<String, Integer> treeMapOfWords = new TreeMap<String, Integer>();
+        //TreeMap<String, Integer> treeMapOfWords = new TreeMap<String, Integer>();
         int maxForTopN = 20;
 
         // Get url and get ready to read
-        URL url = new URL("https://www.gutenberg.org/files/1065/1065-h/1065-h.htm");
+        URL url = new URL(sourceUrl);
         Scanner scan = new Scanner(url.openStream());
 
         // Find the title
@@ -30,42 +41,67 @@ public class TextAnalyzer {
             if (lineTemp.length() > 0 && lineTemp != null) {
 
                 // Loop through the list of normalized words
-                for(String word : lineToStringArray(removeSpecialCharacters((removeHtmlTags(lineTemp))))){
+                addToTreeMapFromStringArray(lineToStringArray(removeSpecialCharacters((removeHtmlTags(lineTemp)))));
 
-                    // Check to see if the word is blank
-                    if(word.length() > 0 &&  word != null) {
-
-                        // If not a new word, then add 1 to the counter for that word
-                        if (treeMapOfWords.containsKey(word)) {
-                            treeMapOfWords.put(word, treeMapOfWords.get(word) + 1 );
-                        } else {
-                            // New word
-                            treeMapOfWords.put(word, 1);
-                        }
-                    }
-                }
             }
         }
 
         scan.close();
 
-        // Print out the results
-        getTopNTreeNodes(treeMapOfWords, maxForTopN, true);
+
+        return getTopNTreeNodes(treeMapOfWords, topN, true);
     }
+
+    public static Map getListOfWordFrequencyUsingText(String text, Integer topN)
+    {
+        clearList();
+        addToTreeMapFromStringArray(lineToStringArray(removeSpecialCharacters(text)));
+        return getTopNTreeNodes(treeMapOfWords, topN, true);
+    }
+    public static void clearList() {
+        treeMapOfWords.clear();
+    }
+
+
+
+    private static Map addToTreeMapFromStringArray(String stringArray[]) {
+        for(String word : stringArray){
+
+            // Check to see if the word is blank
+            if(word.length() > 0 &&  word != null) {
+
+                // If not a new word, then add 1 to the counter for that word
+                if (treeMapOfWords.containsKey(word)) {
+                    treeMapOfWords.put(word, treeMapOfWords.get(word) + 1 );
+                } else {
+                    // New word
+                    treeMapOfWords.put(word, 1);
+                }
+            }
+        }
+        return null;
+    };
+
+    public static void main(String args[]) throws IOException {
+
+        launch(args);
+
+    }
+
 
     public static <K, V extends Comparable<V>> Map<K, V> sortByValuesDescending(final Map<K, V> map) {
         Comparator<K> valueComparator = new Comparator<K>() {
-                    public int compare(K k1, K k2) {
-                        int compare = map.get(k2).compareTo(map.get(k1));
+            public int compare(K k1, K k2) {
+                int compare = map.get(k2).compareTo(map.get(k1));
 
-                        if (compare == 0) {
-                            return 1;
-                        }
-                        else {
-                            return compare;
-                        }
-                    }
-                };
+                if (compare == 0) {
+                    return 1;
+                }
+                else {
+                    return compare;
+                }
+            }
+        };
 
         Map<K, V> sortedByValuesDescending = new TreeMap<K, V>(valueComparator);
         sortedByValuesDescending.putAll(map);
@@ -147,6 +183,16 @@ public class TextAnalyzer {
         finalString = line.replaceAll("[^a-zA-Z0-9\\s]", "");
         return finalString;
     }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        FXMLLoader fxmlLoader = new FXMLLoader(TextAnalyzer.class.getResource("textAnalyzer.fxml"));
+
+        Scene scene = new Scene(fxmlLoader.load(), 600, 800);
+        stage.setScene(scene);
+        stage.setTitle("My Title");
+        stage.show();
+
+
+    }
 }
-
-
