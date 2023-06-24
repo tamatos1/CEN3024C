@@ -17,6 +17,10 @@ public class TextAnalyzer extends Application {
     public static Map getListOfWordFrequencyUsingURL(String sourceUrl, String startingHtmlLine, String stoppingHtmlLine, Integer topN) throws IOException {
         clearList();
 
+        if(sourceUrl == null || startingHtmlLine == null || stoppingHtmlLine == null) {
+            return null;
+        };
+
         String lineTemp = "";
         //TreeMap<String, Integer> treeMapOfWords = new TreeMap<String, Integer>();
         int maxForTopN = 20;
@@ -55,6 +59,11 @@ public class TextAnalyzer extends Application {
     public static Map getListOfWordFrequencyUsingText(String text, Integer topN)
     {
         clearList();
+
+        if(text == null || topN == null) {
+            return null;
+        }
+
         addToTreeMapFromStringArray(lineToStringArray(removeSpecialCharacters(text)));
         return getTopNTreeNodes(treeMapOfWords, topN, true);
     }
