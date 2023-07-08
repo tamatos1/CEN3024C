@@ -11,9 +11,41 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+/**
+ * This class is set up to be able to read in text and then analyze it to
+ * determine the number of unique words.
+ */
 public class TextAnalyzer extends Application {
+
+    /**
+     * This treemap is the list that will be used to house the unique words
+     */
     private static TreeMap<String, Integer> treeMapOfWords = new TreeMap<String, Integer>();
 
+
+    /**
+     * This method is the starting point for the application.
+     *
+     * @param  args  this is the standard string array that is passed in when using the main method
+     */
+    public static void main(String args[]) throws IOException {
+
+        launch(args);
+
+    }
+
+    /**
+     * Returns the top N number of items in a map with the list of
+     * frequent words. This method uses a URL where the text is found,
+     * a known starting HTML line, an ending HTML line.
+     * This method is public.
+     *
+     * @param  sourceUrl  an HTML line that indicates the start of the document
+     * @param  startingHtmlLine the HTML line that indicates where to start counting words
+     * @param  stoppingHtmlLine the HTML line that indicates where to start counting words
+     * @param topN the integer that represents the total number of words to return
+     * @return      the map with the count of unique words
+     */
     public static Map getListOfWordFrequencyUsingURL(String sourceUrl, String startingHtmlLine, String stoppingHtmlLine, Integer topN) throws IOException {
         clearList();
 
@@ -56,8 +88,16 @@ public class TextAnalyzer extends Application {
         return getTopNTreeNodes(treeMapOfWords, topN, true);
     }
 
-    public static Map getListOfWordFrequencyUsingText(String text, Integer topN)
-    {
+    /**
+     * Returns the top N number of items in a map with the list of
+     * frequent words. This method uses a text that is passed in.
+     * This method is public.
+     *
+     * @param  text  a text that will be read to count the number of unique words
+     * @param topN the integer that represents the total number of words to return
+     * @return      the map with the count of unique words
+     */
+    public static Map getListOfWordFrequencyUsingText(String text, Integer topN) {
         clearList();
 
         if(text == null || topN == null) {
@@ -67,13 +107,16 @@ public class TextAnalyzer extends Application {
         addToTreeMapFromStringArray(lineToStringArray(removeSpecialCharacters(text)));
         return getTopNTreeNodes(treeMapOfWords, topN, true);
     }
-    public static void clearList() {
-        treeMapOfWords.clear();
-    }
 
 
-
-    private static Map addToTreeMapFromStringArray(String stringArray[]) {
+    /**
+     * This method adds all unique words in an array to the
+     * treemap of words. If a word already exists in the treemap,
+     * then the word is ignored.
+     *
+     * @param  stringArray  an array of strings
+     */
+    private static void addToTreeMapFromStringArray(String stringArray[]) {
         for(String word : stringArray){
 
             // Check to see if the word is blank
@@ -88,35 +131,27 @@ public class TextAnalyzer extends Application {
                 }
             }
         }
-        return null;
     };
 
-    public static void main(String args[]) throws IOException {
-
-        launch(args);
-
+    /**
+     * This method clears the map list.
+     *
+     * @return void
+     */
+    public static void clearList() {
+        treeMapOfWords.clear();
     }
 
 
-    public static <K, V extends Comparable<V>> Map<K, V> sortByValuesDescending(final Map<K, V> map) {
-        Comparator<K> valueComparator = new Comparator<K>() {
-            public int compare(K k1, K k2) {
-                int compare = map.get(k2).compareTo(map.get(k1));
-
-                if (compare == 0) {
-                    return 1;
-                }
-                else {
-                    return compare;
-                }
-            }
-        };
-
-        Map<K, V> sortedByValuesDescending = new TreeMap<K, V>(valueComparator);
-        sortedByValuesDescending.putAll(map);
-        return sortedByValuesDescending;
-    }
-
+    /**
+     * Returns the top N number of items in a map with the list of
+     * frequent words. This method uses a text that is passed in.
+     *
+     * @param  treeMap  a list of words (treemap)
+     * @param maxCount the integer that represents the total number of words to return
+     * @param printToScreen a boolean that determines if the results will be printed to the console
+     * @return      the map with the count of unique words
+     */
     private static Map getTopNTreeNodes(TreeMap treeMap, int maxCount, boolean printToScreen) {
         Map sortedMap = sortByValuesDescending(treeMap);
         Map<String, Integer> top20 = new HashMap<String, Integer>();
@@ -140,11 +175,26 @@ public class TextAnalyzer extends Application {
 
         return top20;
     }
+
+    /**
+     * This method gets a string and splits them into a list of words.
+     * It uses the space character as the delimiter.
+     *
+     * @param  line  a text that will be used to split into a list
+     * @return      a string array
+     */
     private static String[] lineToStringArray(String line) {
         String[] words = line.toLowerCase().split("\\s+");
         return words;
     }
 
+    /**
+     * This method is used when using a URL to get the text to analyze.
+     * It uses a text that is passed in to find where in the text to start reading.
+     *
+     * @param  scan  a scanner that reads in a file
+     * @param title the string that will be used to find the start of the text to read
+     */
     private static void moveAfterTitleLine(Scanner scan, String title) {
         String lineTemp;
         boolean titleFound = false;
@@ -156,6 +206,13 @@ public class TextAnalyzer extends Application {
         }
     }
 
+    /**
+     * This method removes HTML tags from the string that is passed in.
+     * A tag starts with < and ends with >.
+     *
+     * @param  line  a text that will have html tags removed
+     * @return      the string with the HTML tags removed
+     */
     private static String removeHtmlTags(String line) {
         String lineTemp = "";
         char startSkipChar = '<';
@@ -186,6 +243,12 @@ public class TextAnalyzer extends Application {
         return finalString;
     }
 
+    /**
+     * This method removes special characters the string that is passed in.
+     *
+     * @param  line  a text that will have html tags removed
+     * @return      the string with the special characters removed
+     */
     private static String removeSpecialCharacters(String line) {
         String finalString = "";
 
@@ -193,13 +256,44 @@ public class TextAnalyzer extends Application {
         return finalString;
     }
 
+    /**
+     * This method returns a sorted map in descending order on using the value.
+     *
+     * @param map  an HTML line that indicates the start of the document
+     * @return      the map with the sorted map passed in
+     */
+    public static <K, V extends Comparable<V>> Map<K, V> sortByValuesDescending(final Map<K, V> map) {
+        Comparator<K> valueComparator = new Comparator<K>() {
+            public int compare(K k1, K k2) {
+                int compare = map.get(k2).compareTo(map.get(k1));
+
+                if (compare == 0) {
+                    return 1;
+                }
+                else {
+                    return compare;
+                }
+            }
+        };
+
+        Map<K, V> sortedByValuesDescending = new TreeMap<K, V>(valueComparator);
+        sortedByValuesDescending.putAll(map);
+        return sortedByValuesDescending;
+    }
+
+
+    /**
+     * This method is the starting point for the UI JavaFx application.
+     *
+     * @param  stage  this stage that will be used for the JavaFx application
+     */
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(TextAnalyzer.class.getResource("textAnalyzer.fxml"));
 
         Scene scene = new Scene(fxmlLoader.load(), 600, 800);
         stage.setScene(scene);
-        stage.setTitle("Module 6 Assignment");
+        stage.setTitle("Module 9 Assignment");
         stage.show();
 
 

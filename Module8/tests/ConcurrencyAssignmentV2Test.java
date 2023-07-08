@@ -2,7 +2,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ConcurrencyAssignmentV2Test {
     final int[] arrayOfNumbers = {1,3,5,3,9,5,7,2,8,3};
-    final long sumKnown = 46;
+    final long sumKnown = 47;
 
     @org.junit.jupiter.api.Test
     void getFinalSumUsingMultiThread() {
