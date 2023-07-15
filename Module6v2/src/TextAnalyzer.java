@@ -9,7 +9,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import java.util.*;
+
+import java.sql.*;
 
 /**
  * This class is set up to be able to read in text and then analyze it to
@@ -29,7 +32,6 @@ public class TextAnalyzer extends Application {
      * @param  args  this is the standard string array that is passed in when using the main method
      */
     public static void main(String args[]) throws IOException {
-
         launch(args);
 
     }
@@ -47,6 +49,7 @@ public class TextAnalyzer extends Application {
      * @return      the map with the count of unique words
      */
     public static Map getListOfWordFrequencyUsingURL(String sourceUrl, String startingHtmlLine, String stoppingHtmlLine, Integer topN) throws IOException {
+
         clearList();
 
         if(sourceUrl == null || startingHtmlLine == null || stoppingHtmlLine == null) {
@@ -84,7 +87,6 @@ public class TextAnalyzer extends Application {
 
         scan.close();
 
-
         return getTopNTreeNodes(treeMapOfWords, topN, true);
     }
 
@@ -104,10 +106,71 @@ public class TextAnalyzer extends Application {
             return null;
         }
 
-        addToTreeMapFromStringArray(lineToStringArray(removeSpecialCharacters(text)));
+        String[] textArrayTemp = lineToStringArray(removeSpecialCharacters(text));
+        addToDatabaseFromStringArray(textArrayTemp, topN);
+        addToTreeMapFromStringArray(textArrayTemp);
+
         return getTopNTreeNodes(treeMapOfWords, topN, true);
     }
 
+    /**
+     * Saves the top N number of items to a database with the list of
+     * frequent words. This method uses a text that is passed in.
+     * This method is public.
+     *
+     * @param  stringArray  a list of text that will be read to count the number of unique words
+     * @param topN the integer that represents the total number of words to return
+     */
+    public static void addToDatabaseFromStringArray(String stringArray[], Integer topN) {
+        int frequency = 0;
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/word_occurrences","root","Xojte3-dizsyb-guwsun");
+
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("DELETE FROM word");
+            PreparedStatement preparedStatementForSelect = connection.prepareStatement("SELECT * FROM word WHERE word = ?");
+            PreparedStatement preparedStatementForInsert = connection.prepareStatement("INSERT INTO word (word, frequency) VALUES (?,?)");
+            PreparedStatement preparedStatementForUpdate = connection.prepareStatement("UPDATE word SET frequency = ? WHERE word = ?");
+
+            for(String word : stringArray) {
+                // Check to see if the word is blank
+                frequency = 0;
+
+                if(word.length() > 0 &&  word != null) {
+                    preparedStatementForSelect.setString(1, word);
+                    ResultSet resultSet = preparedStatementForSelect.executeQuery();
+
+                    // If not a new word, then add 1 to the counter for that word
+                    if (resultSet.next() == true) {
+
+                        frequency = resultSet.getInt("frequency");
+                        preparedStatementForUpdate.setInt(1, frequency + 1);
+                        preparedStatementForUpdate.setString(2, word);
+                        preparedStatementForUpdate.executeUpdate();
+                    } else {
+                        // Insert a new word
+                        preparedStatementForInsert.setString(1,word);
+                        preparedStatementForInsert.setInt(2,1);
+                        preparedStatementForInsert.executeUpdate();
+
+                    }
+            }
+        }
+
+
+            // Delete all records after the top N rows
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM (SELECT * FROM word ORDER BY frequency DESC, word ASC LIMIT " + topN + ") as testTable ORDER BY frequency ASC, word ASC LIMIT 1");
+            resultSet.next();
+            int freqTest = resultSet.getInt("frequency");
+            statement.executeUpdate("DELETE FROM word WHERE frequency < " + freqTest);
+
+            connection.close();
+        }catch(Exception e){ System.out.println(e);}
+
+
+    }
 
     /**
      * This method adds all unique words in an array to the
@@ -293,7 +356,7 @@ public class TextAnalyzer extends Application {
 
         Scene scene = new Scene(fxmlLoader.load(), 600, 800);
         stage.setScene(scene);
-        stage.setTitle("Module 9 Assignment");
+        stage.setTitle("Module 10 Assignment");
         stage.show();
 
 

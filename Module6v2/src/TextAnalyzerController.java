@@ -86,6 +86,7 @@ public class TextAnalyzerController {
     @FXML
     void onClicked() throws IOException {
         int i = 1;
+        String textToAnalyze = "";
         tblvwFrequency.getSortOrder().add((TableColumn<WordFrequency, ?>) tblcCount);
         ObservableList<WordFrequency> data = FXCollections.observableArrayList();
         Map myMap = new TreeMap() {
@@ -97,12 +98,15 @@ public class TextAnalyzerController {
         switch (selectedButton.getText())
         {
             case "Using URL":
-                myMap = TextAnalyzer.getListOfWordFrequencyUsingURL(txtSourceUrl.getText(), txtHtmlOfTitle.getText(), txtHtmlOfEnd.getText(), topN);
+                textToAnalyze = txtSourceUrl.getText();
+                myMap = TextAnalyzer.getListOfWordFrequencyUsingURL(textToAnalyze, txtHtmlOfTitle.getText(), txtHtmlOfEnd.getText(), topN);
                 break;
             case "Using Textbox":
-                myMap = TextAnalyzer.getListOfWordFrequencyUsingText(txtSourceTextbox.getText(), topN);
+                textToAnalyze = txtSourceTextbox.getText();
+                myMap = TextAnalyzer.getListOfWordFrequencyUsingText(textToAnalyze, topN);
                 break;
         }
+
 
         tblcWord.setCellValueFactory(new PropertyValueFactory("word"));
         tblcCount.setCellValueFactory(new PropertyValueFactory("frequency"));
